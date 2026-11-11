@@ -129,6 +129,19 @@ describe.each(['bru', 'yml'])('openapi sync with preserve values in a %s collect
     fs.rmSync(mockUserData, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
   });
 
+  it('allows more than five consecutive OpenAPI syncs of the same collection', async () => {
+    writeStoredSpec(previousSpec);
+    writeUserRequest({ name: 'Rex', legacy: 'old' });
+
+    for (let index = 1; index <= 7; index++) {
+      const revision = `revision${index}`;
+      const spec = jsonSpec({ name: string, [revision]: { type: 'integer' } });
+
+      await expect(apply(spec, modifiedPets)).resolves.toEqual({ success: true });
+      expect(JSON.parse(readRequest().body.json)).toEqual({ name: 'Rex', [revision]: 0 });
+    }
+  });
+
   it('drops the fields the spec does not have, and the preview shows what the sync writes', async () => {
     writeStoredSpec(previousSpec);
     writeUserRequest({ name: 'Rex', legacy: 'x', debug: true });
