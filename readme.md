@@ -113,6 +113,22 @@ echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/bruno.gpg] http://debian.usebr
 sudo apt update && sudo apt install bruno
 ```
 
+## OpenAPI synchronization in source builds
+
+This repository includes OpenAPI specification synchronization in its React renderer and Electron IPC implementation. The source implementation does not apply a monthly synchronization quota. This is not a claim about the licensing, entitlements, or limits of the separately distributed official Bruno binaries.
+
+To build this fork from source, follow the [development prerequisites](contributing.md#development), then run:
+
+```sh
+npm run setup
+npm run build:web
+npm run build:electron
+```
+
+On Linux, you can also run the **Build Bruno fork (Linux)** workflow manually from the GitHub Actions tab and download its unsigned AppImage artifact. The workflow builds from this repository's current branch and does not download a prebuilt Bruno executable.
+
+OpenAPI sync is accessed from a collection's OpenAPI Sync tab. Connect a specification and sync changes as needed; there is no locally enforced monthly count in the source implementation. Official downloads may behave differently.
+
 ## Bruno CLI
 
 The **Bruno CLI** lets you run your API collections from the command line, which is ideal for automated testing and CI/CD pipelines. Install it from npm using the package manager of your choice:
