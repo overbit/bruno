@@ -1,0 +1,36 @@
+name: Build Bruno fork (Linux)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies and build shared packages
+        uses: ./.github/actions/common/setup-node-deps
+
+      - name: Build renderer
+        run: npm run build:web
+
+      - name: Package Linux application
+        run: npm run build:electron
+
+      - name: Verify AppImage was produced
+        shell: bash
+        run: |
+          compgen -G 'packages/bruno-electron/out/*.AppImage' > /dev/null
+
+      - name: Upload unsigned AppImage
+        uses: actions/upload-artifact@v6
+        with:
+          name: bruno-source-build-linux
+          path: packages/bruno-electron/out/*.AppImage
+          if-no-files-found: error
+          retention-days: 14
